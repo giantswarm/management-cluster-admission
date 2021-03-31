@@ -22,7 +22,7 @@ import (
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
-
+	"github.com/giantswarm/management-cluster-admission/controllers"
 	"github.com/go-logr/zapr"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -98,7 +98,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	//controllersLog := rootLog.Named("controllers")
+	controllersLog := rootLog.Named("controllers")
+	if err = (&controllers.DeploymentValidator{
+		Client: mgr.GetClient(),
+		Log:    controllersLog.Named("deployment-validator").Sugar(),
+	}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error("unable to create webhook", zap.NamedError("stack", err))
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
