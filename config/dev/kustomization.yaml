@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: management-cluster-admission-dev
+
+namePrefix: management-cluster-admission-
+nameSuffix: -USER
+
+images:
+- name: controller
+  newName: giantswarm/management-cluster-admission
+  newTag: latest
+
+resources:
+- ../default

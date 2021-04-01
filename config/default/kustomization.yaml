@@ -6,7 +6,7 @@ namespace: management-cluster-admission-system
 # "wordpress" becomes "alices-wordpress".
 # Note that it should also match with the prefix (text before '-') of the namespace
 # field above.
-namePrefix: management-cluster-admission-
+#namePrefix: management-cluster-admission-
 
 # Labels to add to all resources and selectors.
 #commonLabels:

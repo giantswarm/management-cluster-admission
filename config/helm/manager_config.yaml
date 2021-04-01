@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controller-manager
+  namespace: system
+data:
+  #MANAGEMENT_CLUSTER_ADMISSION_FLAG_NAME: '{{ .Values.flagValue }}'
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: controller-manager
+  namespace: system
+type: Opaque
+stringData:
+  #MANAGEMENT_CLUSTER_ADMISSION_FLAG_NAME: '{{ .Values.flagValue }}'
