@@ -2,11 +2,14 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/giantswarm/microerror"
 	"go.uber.org/zap"
+	admissionv1 "k8s.io/api/admission/v1"
 	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/labels"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -53,7 +56,68 @@ func (v *DeploymentValidator) Handle(ctx context.Context, req admission.Request)
 }
 
 func (v *DeploymentValidator) handle(ctx context.Context, req admission.Request, deployment *appsv1.Deployment) (admission.Response, error) {
-	return admission.Denied("__NOT_IMPLEMENTED__"), nil
+	var err error
+
+	const (
+		appNameLabel    = "app.kubernetes.io/name"
+		appVersionLabel = "app.kubernetes.io/version"
+	)
+
+	if len(deployment.Labels) == 0 {
+		return admission.Allowed("No labels"), nil
+	}
+	appName, ok := deployment.Labels[appNameLabel]
+	if !ok {
+		return admission.Allowed(fmt.Sprintf("Label %#q not found", appNameLabel)), nil
+	}
+	appVersion, ok := deployment.Labels[appVersionLabel]
+	if !ok {
+		return admission.Allowed(fmt.Sprintf("Label %#q not found", appVersionLabel)), nil
+	}
+
+	var sameNameSelector labels.Selector
+	{
+		s := appNameLabel + "=" + appName + "," + appVersionLabel + "=" + appVersion
+		sameNameSelector, err = labels.Parse(s)
+		if err != nil {
+			return admission.Response{}, microerror.Mask(fmt.Errorf("failed to create selector for string = %#q with error: %s", s, err))
+		}
+	}
+
+	sameNameDeployments := appsv1.DeploymentList{}
+	{
+		err := v.List(ctx, &sameNameDeployments, &client.ListOptions{
+			LabelSelector: sameNameSelector,
+		})
+		if err != nil {
+			return admission.Response{}, microerror.Mask(err)
+		}
+	}
+
+	switch {
+	case req.Operation == admissionv1.Create && len(sameNameDeployments.Items) > 0:
+		return admission.Denied(fmt.Sprintf(
+			"Found %d deployments for selector = %q and operation = %q, expected at most 0",
+			len(sameNameDeployments.Items), sameNameSelector, req.Operation,
+		)), nil
+	case req.Operation == admissionv1.Create:
+		return admission.Allowed(fmt.Sprintf(
+			"Found %d deployments for selector = %q and operation = %q",
+			len(sameNameDeployments.Items), sameNameSelector, req.Operation,
+		)), nil
+	case req.Operation == admissionv1.Update && len(sameNameDeployments.Items) > 1:
+		return admission.Denied(fmt.Sprintf(
+			"Found %d deployments for selector = %q and operation = %q, expected at most 1",
+			len(sameNameDeployments.Items), sameNameSelector, req.Operation,
+		)), nil
+	case req.Operation == admissionv1.Update:
+		return admission.Allowed(fmt.Sprintf(
+			"Found %d deployments for selector = %q and operation = %q",
+			len(sameNameDeployments.Items), sameNameSelector, req.Operation,
+		)), nil
+	}
+
+	return admission.Response{}, microerror.Mask(fmt.Errorf("unsupported operation %#q", req.Operation))
 }
 
 func (v *DeploymentValidator) SetupWebhookWithManager(mgr ctrl.Manager) error {
