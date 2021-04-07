@@ -16,7 +16,7 @@ workflows:
       - architect/push-to-docker:
           context: "architect"
           name: push-management-cluster-admission-to-docker
-          image: "giantswarm/management-cluster-admission"
+          image: "docker.io/giantswarm/management-cluster-admission"
           username_envar: "DOCKER_USERNAME"
           password_envar: "DOCKER_PASSWORD"
           requires:
