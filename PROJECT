@@ -1,0 +1,6 @@
+domain: giantswarm.io
+layout:
+- go.kubebuilder.io/v3
+projectName: management-cluster-admission
+repo: github.com/giantswarm/management-cluster-admission
+version: "3"
