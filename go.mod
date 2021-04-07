@@ -13,3 +13,8 @@ require (
 	k8s.io/client-go v0.19.2
 	sigs.k8s.io/controller-runtime v0.7.2
 )
+
+replace (
+	github.com/coreos/etcd => github.com/coreos/etcd v3.3.24+incompatible
+	github.com/gorilla/websocket => github.com/gorilla/websocket v1.4.2
+)
