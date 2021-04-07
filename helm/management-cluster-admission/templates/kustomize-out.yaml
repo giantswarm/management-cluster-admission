@@ -225,7 +225,10 @@ subjects:
   namespace: '{{ .Release.Namespace }}'
 ---
 apiVersion: v1
-data: null
+data:
+  MANAGEMENT_CLUSTER_ADMISSION_HEALTH_PROBE_BIND_ADDRESS: '{{ .Values.healthProbeBindAddress }}'
+  MANAGEMENT_CLUSTER_ADMISSION_LEADER_ELECT: '{{ .Values.leaderElect }}'
+  MANAGEMENT_CLUSTER_ADMISSION_METRICS_BIND_ADDRESS: '{{ .Values.metricsBindAddress }}'
 kind: ConfigMap
 metadata:
   annotations:
@@ -375,7 +378,7 @@ spec:
             name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
         - secretRef:
             name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
-        image: kopiczko/controller:latest
+        image: '{{ .Values.registry.domain }}/{{ .Values.image.name }}:{{ .Values.image.tag }}'
         livenessProbe:
           httpGet:
             path: /healthz
