@@ -1,8 +1,10 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= giantswarm/management-cluster-admission:latest
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true,preserveUnknownFields=false"
+
+APPLICATION := $(shell go list -m | cut -d '/' -f 3)
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -31,8 +33,11 @@ help: ## Display this help.
 
 ##@ Development
 
+manifests: CHART_TEMPLATE_FILE := helm/$(APPLICATION)/templates/kustomize-out.yaml
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	mkdir -p $(shell dirname $(CHART_TEMPLATE_FILE))
+	kustomize build config/helm -o '$(CHART_TEMPLATE_FILE)'
 
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
@@ -71,11 +76,15 @@ install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~
 uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE) build config/crd | kubectl delete -f -
 
+deploy: NAME_SUFFIX ?= $(USER)
 deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	cd config/dev && $(KUSTOMIZE) edit set image controller=${IMG}
+	cd config/dev && $(KUSTOMIZE) edit set namesuffix -- -$(NAME_SUFFIX)
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
+undeploy: NAME_SUFFIX ?= $(USER)
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
+	cd config/dev && $(KUSTOMIZE) edit set namesuffix -- -$(NAME_SUFFIX)
 	$(KUSTOMIZE) build config/default | kubectl delete -f -
 
 

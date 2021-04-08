@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controller-manager
+  namespace: system
+data:
+  MANAGEMENT_CLUSTER_ADMISSION_LEADER_ELECT: "{{ .Values.leaderElect }}"
+  MANAGEMENT_CLUSTER_ADMISSION_METRICS_BIND_ADDRESS: "{{ .Values.metricsBindAddress }}"
+  MANAGEMENT_CLUSTER_ADMISSION_HEALTH_PROBE_BIND_ADDRESS: "{{ .Values.healthProbeBindAddress }}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: controller-manager
+  namespace: system
+type: Opaque
+stringData:
+  #MANAGEMENT_CLUSTER_ADMISSION_FLAG_NAME: '{{ .Values.flagValue }}'

@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+configurations:
+- namereference.yaml
+
+resources:
+- psp.yaml
+- psp_role.yaml
+- psp_role_binding.yaml
+
+patchesStrategicMerge:
+# This patch is required to set the user and group ID so it satisfies the PSP.
+- manager_security_context_patch.yaml

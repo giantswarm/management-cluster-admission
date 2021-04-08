@@ -1,0 +1,14 @@
+leaderElect: false
+metricsBindAddress: ":8080"
+healthProbeBindAddress: ":8081"
+
+# Generic configuration.
+
+registry:
+  domain: docker.io
+image:
+  name: "giantswarm/management-cluster-admission"
+  tag: "[[ .Version ]]"
+project:
+  branch: "[[ .Branch ]]"
+  commit: "[[ .SHA ]]"

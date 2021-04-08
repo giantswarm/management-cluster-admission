@@ -1,0 +1,505 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager-psp'
+spec:
+  allowPrivilegeEscalation: false
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  runAsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  runAsUser:
+    rule: MustRunAsNonRoot
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+  - secret
+  - configMap
+  - hostPath
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-leader-election-role'
+  namespace: '{{ .Release.Namespace }}'
+rules:
+- apiGroups:
+  - ""
+  - coordination.k8s.io
+  resources:
+  - configmaps
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager-psp'
+rules:
+- apiGroups:
+  - extensions
+  resourceNames:
+  - '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager-psp'
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  creationTimestamp: null
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-manager-role'
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-leader-election-rolebinding'
+  namespace: '{{ .Release.Namespace }}'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-leader-election-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager-psp'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager-psp'
+subjects:
+- kind: ServiceAccount
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-manager-rolebinding'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-manager-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: v1
+data:
+  MANAGEMENT_CLUSTER_ADMISSION_HEALTH_PROBE_BIND_ADDRESS: '{{ .Values.healthProbeBindAddress }}'
+  MANAGEMENT_CLUSTER_ADMISSION_LEADER_ELECT: '{{ .Values.leaderElect }}'
+  MANAGEMENT_CLUSTER_ADMISSION_METRICS_BIND_ADDRESS: '{{ .Values.metricsBindAddress }}'
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: v1
+data:
+  controller_manager_config.yaml: |
+    apiVersion: controller-runtime.sigs.k8s.io/v1alpha1
+    kind: ControllerManagerConfig
+    health:
+      healthProbeBindAddress: :8081
+    metrics:
+      bindAddress: 127.0.0.1:8080
+    webhook:
+      port: 9443
+    leaderElection:
+      leaderElect: true
+      resourceName: 02c7a966.giantswarm.io
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-manager-config'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+stringData: null
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-webhook-service'
+  namespace: '{{ .Release.Namespace }}'
+spec:
+  ports:
+  - port: 443
+    targetPort: 9443
+  selector:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    control-plane: controller-manager
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    control-plane: controller-manager
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+      app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+      app.kubernetes.io/instance: '{{ .Release.Name }}'
+      app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+      app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+      app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+      control-plane: controller-manager
+      helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  template:
+    metadata:
+      annotations:
+        meta.helm.sh/release-name: '{{ .Release.Name }}'
+        meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+      labels:
+        app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+        app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+        app.kubernetes.io/instance: '{{ .Release.Name }}'
+        app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+        app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+        app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+        control-plane: controller-manager
+        helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+    spec:
+      containers:
+      - args:
+        - --leader-elect
+        command:
+        - /manager
+        envFrom:
+        - configMapRef:
+            name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+        - secretRef:
+            name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+        image: '{{ .Values.registry.domain }}/{{ .Values.image.name }}:{{ .Values.image.tag }}'
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      securityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      serviceAccountName: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: webhook-server-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-serving-cert'
+  namespace: '{{ .Release.Namespace }}'
+spec:
+  dnsNames:
+  - '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-webhook-service.{{ .Release.Namespace }}.svc'
+  - '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-webhook-service.{{ .Release.Namespace }}.svc.cluster.local'
+  issuerRef:
+    kind: Issuer
+    name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-selfsigned-issuer'
+  secretName: webhook-server-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  annotations:
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-selfsigned-issuer'
+  namespace: '{{ .Release.Namespace }}'
+spec:
+  selfSigned: {}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: '{{ .Release.Namespace }}/{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-serving-cert'
+    meta.helm.sh/release-name: '{{ .Release.Name }}'
+    meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
+  labels:
+    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
+    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
+    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
+  name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-validating-webhook-configuration'
+webhooks:
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-webhook-service'
+      namespace: '{{ .Release.Namespace }}'
+      path: /validate-apps-v1-deployment
+  failurePolicy: Fail
+  name: vdeployment.kb.io
+  rules:
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+  sideEffects: None
