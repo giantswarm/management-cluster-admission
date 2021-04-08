@@ -17,13 +17,16 @@ limitations under the License.
 package main
 
 import (
-	"flag"
+	"context"
+	"fmt"
 	"os"
+	"strings"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
-	"github.com/giantswarm/management-cluster-admission/controllers"
+	"github.com/giantswarm/microerror"
 	"github.com/go-logr/zapr"
+	flag "github.com/spf13/pflag"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -33,7 +36,11 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
+
 	//+kubebuilder:scaffold:imports
+
+	"github.com/giantswarm/management-cluster-admission/controllers"
+	"github.com/giantswarm/management-cluster-admission/pkg/project"
 )
 
 var (
@@ -46,17 +53,82 @@ func init() {
 	//+kubebuilder:scaffold:scheme
 }
 
-func main() {
-	var metricsAddr string
-	var enableLeaderElection bool
-	var probeAddr string
-	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
-	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
-	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
+var flags = struct {
+	MetricsAddr          string
+	EnableLeaderElection bool
+	ProbeAddr            string
+}{}
+
+func initFlags() (errors []error) {
+	// Flag/configuration names.
+	const (
+		flagLeaderElect            = "leader-elect"
+		flagMetricsBindAddres      = "metrics-bind-address"
+		flagHealthProbeBindAddress = "health-probe-bind-address"
+	)
+
+	// Flag binding.
+	flag.StringVar(&flags.MetricsAddr, flagMetricsBindAddres, ":8080", "The address the metric endpoint binds to.")
+	flag.StringVar(&flags.ProbeAddr, flagHealthProbeBindAddress, ":8081", "The address the probe endpoint binds to.")
+	flag.BoolVar(&flags.EnableLeaderElection, flagLeaderElect, false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
-	flag.Parse()
 
+	// Parse flags and configuration.
+	flag.Parse()
+	errors = append(errors, initFlagsFromEnv()...)
+
+	// Validation.
+
+	//if flags.Name == "" {
+	//	errors = append(errors, fmt.Errorf("--%s flag must be set", flagName))
+	//}
+
+	return
+}
+
+func initFlagsFromEnv() (errors []error) {
+	flag.CommandLine.VisitAll(func(f *flag.Flag) {
+		if f.Changed {
+			return
+		}
+		env := project.Name() + "_" + f.Name
+		env = strings.ReplaceAll(env, ".", "_")
+		env = strings.ReplaceAll(env, "-", "_")
+		env = strings.ToUpper(env)
+		v, ok := os.LookupEnv(env)
+		if !ok {
+			return
+		}
+		fmt.Printf("Setting --%s flag to value of $%s\n", f.Name, env)
+		err := f.Value.Set(v)
+		if err != nil {
+			errors = append(errors, fmt.Errorf("failed to set --%s value using %q environment variable", f.Name, env))
+		}
+	})
+
+	return
+}
+
+func main() {
+	errs := initFlags()
+	if len(errs) > 0 {
+		ss := make([]string, len(errs))
+		for i := range errs {
+			ss[i] = errs[i].Error()
+		}
+		fmt.Fprintf(os.Stderr, "Error: %s\n", strings.Join(ss, "\nError: "))
+		os.Exit(2)
+	}
+
+	err := mainE(context.Background())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", microerror.Pretty(err, true))
+		os.Exit(1)
+	}
+}
+
+func mainE(ctx context.Context) error {
 	rootLog, err := zap.Config{
 		Level:    zap.NewAtomicLevelAt(zap.DebugLevel),
 		Encoding: "json",
@@ -78,24 +150,21 @@ func main() {
 		ErrorOutputPaths: []string{"stdout"},
 	}.Build()
 	if err != nil {
-		panic("failed to setup logger with error: " + err.Error())
+		return microerror.Mask(err)
 	}
-
-	setupLog := rootLog.Named("setup")
 
 	ctrl.SetLogger(zapr.NewLogger(rootLog))
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
-		MetricsBindAddress:     metricsAddr,
+		MetricsBindAddress:     flags.MetricsAddr,
 		Port:                   9443,
-		HealthProbeBindAddress: probeAddr,
-		LeaderElection:         enableLeaderElection,
+		HealthProbeBindAddress: flags.ProbeAddr,
+		LeaderElection:         flags.EnableLeaderElection,
 		LeaderElectionID:       "02c7a966.giantswarm.io",
 	})
 	if err != nil {
-		setupLog.Error("unable to start manager", zap.NamedError("stack", err))
-		os.Exit(1)
+		return microerror.Mask(err)
 	}
 
 	controllersLog := rootLog.Named("controllers")
@@ -103,23 +172,21 @@ func main() {
 		Client: mgr.GetClient(),
 		Log:    controllersLog.Named("deployment-validator").Sugar(),
 	}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error("unable to create webhook", zap.NamedError("stack", err))
-		os.Exit(1)
+		return microerror.Mask(err)
 	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
-		setupLog.Error("unable to set up health check", zap.NamedError("stack", err))
-		os.Exit(1)
+		return microerror.Mask(err)
 	}
 	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
-		setupLog.Error("unable to set up ready check", zap.NamedError("stack", err))
-		os.Exit(1)
+		return microerror.Mask(err)
 	}
 
-	setupLog.Info("starting manager")
+	rootLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
-		setupLog.Error("problem running manager", zap.NamedError("stack", err))
-		os.Exit(1)
+		return microerror.Mask(err)
 	}
+
+	return nil
 }
