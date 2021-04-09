@@ -342,7 +342,7 @@ metadata:
   name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
   namespace: '{{ .Release.Namespace }}'
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app.giantswarm.io/branch: '{{ .Values.project.branch }}'
