@@ -18,6 +18,9 @@ images:
   - name: controller
     newName: "{{ .Values.registry.domain }}/{{ .Values.image.name }}"
     newTag: "{{ .Values.image.tag }}"
+replicas:
+  - name: controller-manager
+    count: 3
 
 resources:
   - ../default

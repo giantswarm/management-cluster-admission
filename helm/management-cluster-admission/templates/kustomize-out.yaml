@@ -342,7 +342,7 @@ metadata:
   name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-controller-manager'
   namespace: '{{ .Release.Namespace }}'
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app.giantswarm.io/branch: '{{ .Values.project.branch }}'
@@ -492,6 +492,12 @@ webhooks:
       path: /validate-apps-v1-deployment
   failurePolicy: Fail
   name: vdeployment.kb.io
+  objectSelector:
+    matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: Exists
+    - key: app.kubernetes.io/version
+      operator: Exists
   rules:
   - apiGroups:
     - apps
