@@ -5,12 +5,12 @@ commonAnnotations:
   meta.helm.sh/release-name: '{{ .Release.Name }}'
   meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
 
+# NOTE: Additional labels that should not be defined in selectors are
+# configured explicitly as LabelTransformer in label_transformer.yaml.
+#
+#     See: https://github.com/kubernetes-sigs/kustomize/issues/1009
+#
 commonLabels:
-  app.giantswarm.io/branch: '{{ .Values.project.branch }}'
-  app.giantswarm.io/commit: '{{ .Values.project.commit }}'
-  app.kubernetes.io/managed-by: '{{ .Release.Service }}'
-  app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
-  helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
   app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
   app.kubernetes.io/instance: '{{ .Release.Name }}'
 
@@ -31,3 +31,6 @@ components:
 
 patchesStrategicMerge:
   - manager_patch.yaml
+
+transformers:
+  - label_transformer.yaml

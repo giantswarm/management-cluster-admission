@@ -315,14 +315,9 @@ spec:
   - port: 443
     targetPort: 9443
   selector:
-    app.giantswarm.io/branch: '{{ .Values.project.branch }}'
-    app.giantswarm.io/commit: '{{ .Values.project.commit }}'
     app.kubernetes.io/instance: '{{ .Release.Name }}'
-    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
     app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
-    app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
     control-plane: controller-manager
-    helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -345,14 +340,9 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app.giantswarm.io/branch: '{{ .Values.project.branch }}'
-      app.giantswarm.io/commit: '{{ .Values.project.commit }}'
       app.kubernetes.io/instance: '{{ .Release.Name }}'
-      app.kubernetes.io/managed-by: '{{ .Release.Service }}'
       app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
-      app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
       control-plane: controller-manager
-      helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
   template:
     metadata:
       annotations:
