@@ -5,13 +5,14 @@ commonAnnotations:
   meta.helm.sh/release-name: '{{ .Release.Name }}'
   meta.helm.sh/release-namespace: '{{ .Release.Namespace }}'
 
-# NOTE: Do not use commonLabels. LabelTransformer is configured explicitly
-# instead so solve problems with selectors. It is defined in
-# label_transformer.yaml.
+# NOTE: Additional labels that should not be defined in selectors are
+# configured explicitly as LabelTransformer in label_transformer.yaml.
 #
 #     See: https://github.com/kubernetes-sigs/kustomize/issues/1009
 #
-#commonLabels:
+commonLabels:
+  app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
+  app.kubernetes.io/instance: '{{ .Release.Name }}'
 
 images:
   - name: controller

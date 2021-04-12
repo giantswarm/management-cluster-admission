@@ -1,33 +1,19 @@
 apiVersion: builtin
 kind: LabelTransformer
 metadata:
-  name: labels
+  name: non-selector-labels
 labels:
   app.giantswarm.io/branch: '{{ .Values.project.branch }}'
   app.giantswarm.io/commit: '{{ .Values.project.commit }}'
   app.kubernetes.io/managed-by: '{{ .Release.Service }}'
   app.kubernetes.io/version: '{{ .Chart.AppVersion }}'
   helm.sh/chart: '{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}'
-  app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
-  app.kubernetes.io/instance: '{{ .Release.Name }}'
 fieldSpecs:
 - path: metadata/labels
   create: true
-- kind: Deployment
+- kind: DaemonSet
   path: spec/template/metadata/labels
   create: true
----
-apiVersion: builtin
-kind: LabelTransformer
-metadata:
-  name: match-labels
-labels:
-  app.kubernetes.io/name: '{{ .Chart.Name | trunc 63 | trimSuffix "-" }}'
-  app.kubernetes.io/instance: '{{ .Release.Name }}'
-fieldSpecs:
 - kind: Deployment
-  path: spec/selector/matchLabels
-  create: true
-- kind: Service
-  path: spec/selector
+  path: spec/template/metadata/labels
   create: true
