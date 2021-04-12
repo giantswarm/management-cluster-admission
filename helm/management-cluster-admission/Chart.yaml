@@ -5,4 +5,5 @@ home: https://github.com/giantswarm/management-cluster-admission
 version: [[ .Version ]]
 appVersion: '[[ .AppVersion ]]'
 annotations:
+  application.giantswarm.io/team: "biscuit"
   config.giantswarm.io/version: 1.x.x
