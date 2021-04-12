@@ -498,6 +498,10 @@ webhooks:
       operator: Exists
     - key: app.kubernetes.io/version
       operator: Exists
+    - key: app.kubernetes.io/name
+      operator: NotIn
+      values:
+      - vertical-pod-autoscaler-app
   rules:
   - apiGroups:
     - apps
