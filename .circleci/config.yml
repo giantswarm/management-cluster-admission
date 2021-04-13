@@ -107,3 +107,17 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+
+      - architect/push-to-app-collection:
+          name: push-management-cluster-admission-to-vmware-app-collection
+          context: architect
+          app_name: "management-cluster-admission"
+          app_namespace: "giantswarm"
+          app_collection_repo: "vmware-app-collection"
+          requires:
+            - push-management-cluster-admission-to-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
