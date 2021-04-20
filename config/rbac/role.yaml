@@ -24,3 +24,4 @@ rules:
   - clusters
   verbs:
   - list
+  - watch
