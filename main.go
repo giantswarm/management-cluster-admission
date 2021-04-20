@@ -50,7 +50,7 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-	capiv1alpha3.AddToScheme(scheme)
+	utilruntime.Must(capiv1alpha3.AddToScheme(scheme))
 
 	//+kubebuilder:scaffold:scheme
 }
