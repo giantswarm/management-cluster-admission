@@ -150,6 +150,12 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - cluster.x-k8s.io
+  resources:
+  - clusters
+  verbs:
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -502,4 +508,25 @@ webhooks:
     - UPDATE
     resources:
     - deployments
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  - v1alpha1
+  clientConfig:
+    service:
+      name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-webhook-service'
+      namespace: '{{ .Release.Namespace }}'
+      path: /validate-security-giantswarm-io-v1alpha1-organization
+  failurePolicy: Fail
+  name: organization.security.giantswarm.io
+  rules:
+  - apiGroups:
+    - security.giantswarm.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - DELETE
+    resources:
+    - organizations
   sideEffects: None

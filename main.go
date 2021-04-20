@@ -174,6 +174,13 @@ func mainE(ctx context.Context) error {
 	}).SetupWebhookWithManager(mgr); err != nil {
 		return microerror.Mask(err)
 	}
+	if err = (&controllers.OrganizationValidator{
+		Client: mgr.GetClient(),
+		Log:    controllersLog.Named("organization-validator").Sugar(),
+	}).SetupWebhookWithManager(mgr); err != nil {
+		return microerror.Mask(err)
+	}
+
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

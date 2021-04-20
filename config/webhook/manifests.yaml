@@ -27,3 +27,24 @@ webhooks:
     resources:
     - deployments
   sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  - v1alpha1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-security-giantswarm-io-v1alpha1-organization
+  failurePolicy: Fail
+  name: organization.security.giantswarm.io
+  rules:
+  - apiGroups:
+    - security.giantswarm.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - DELETE
+    resources:
+    - organizations
+  sideEffects: None
