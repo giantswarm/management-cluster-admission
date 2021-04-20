@@ -43,7 +43,7 @@ func (v *OrganizationValidator) Handle(ctx context.Context, req admission.Reques
 
 	organization := &securityv1alpha1.Organization{}
 
-	err := v.decoder.Decode(req, organization)
+	err := v.decoder.DecodeRaw(req.Object, organization)
 	if err != nil {
 		return admission.Errored(http.StatusBadRequest, err)
 	}
