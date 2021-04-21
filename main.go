@@ -185,7 +185,11 @@ func mainE(ctx context.Context) error {
 
 	//+kubebuilder:scaffold:builder
 
-	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
+	healthProbe := &controllers.HealthProbe{
+		Client: mgr.GetClient(),
+	}
+
+	if err := mgr.AddHealthzCheck("healthz", healthProbe.HealthzCheck); err != nil {
 		return microerror.Mask(err)
 	}
 	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
