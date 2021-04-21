@@ -18,7 +18,7 @@ type HealthProbe struct {
 func (v *HealthProbe) HealthzCheck(_ *http.Request) error {
 	// Check whether manager's client is able to communicate with Kubernetes API.
 	kubeSystemDeployments := appsv1.DeploymentList{}
-	err := v.List(context.Background{}, &kubeSystemDeployments, &client.ListOptions{
+	err := v.List(context.Background(), &kubeSystemDeployments, &client.ListOptions{
 		Namespace: "kube-system",
 		Limit:     1,
 	})
