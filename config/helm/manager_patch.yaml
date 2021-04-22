@@ -13,3 +13,6 @@ spec:
             name: controller-manager
         - secretRef:
             name: controller-manager
+        livenessProbe:
+          periodSeconds: 30
+          timeoutSeconds: 10
