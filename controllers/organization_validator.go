@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 	admissionv1 "k8s.io/api/admission/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	capiv1alpha3 "sigs.k8s.io/cluster-api/api/v1alpha3"
+	capiv1alpha2 "sigs.k8s.io/cluster-api/api/v1alpha2"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -72,7 +72,7 @@ func (v *OrganizationValidator) handle(ctx context.Context, req admission.Reques
 		}
 	}
 
-	orgClusters := capiv1alpha3.ClusterList{}
+	orgClusters := capiv1alpha2.ClusterList{}
 	{
 		err := v.List(ctx, &orgClusters, &client.ListOptions{
 			LabelSelector: orgClustersSelector,
