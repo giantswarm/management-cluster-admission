@@ -7,7 +7,7 @@ import (
 
 	"github.com/giantswarm/microerror"
 	"go.uber.org/zap"
-	admissionv1 "k8s.io/api/admission/v1"
+	admissionv1beta1 "k8s.io/api/admission/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/labels"
 
@@ -95,22 +95,22 @@ func (v *DeploymentValidator) handle(ctx context.Context, req admission.Request,
 	}
 
 	switch {
-	case req.Operation == admissionv1.Create && len(sameNameDeployments.Items) > 0:
+	case req.Operation == admissionv1beta1.Create && len(sameNameDeployments.Items) > 0:
 		return admission.Denied(fmt.Sprintf(
 			"Found %d deployments for selector = %q and operation = %q, expected at most 0",
 			len(sameNameDeployments.Items), sameNameSelector, req.Operation,
 		)), nil
-	case req.Operation == admissionv1.Create:
+	case req.Operation == admissionv1beta1.Create:
 		return admission.Allowed(fmt.Sprintf(
 			"Found %d deployments for selector = %q and operation = %q",
 			len(sameNameDeployments.Items), sameNameSelector, req.Operation,
 		)), nil
-	case req.Operation == admissionv1.Update && len(sameNameDeployments.Items) > 1:
+	case req.Operation == admissionv1beta1.Update && len(sameNameDeployments.Items) > 1:
 		return admission.Denied(fmt.Sprintf(
 			"Found %d deployments for selector = %q and operation = %q, expected at most 1",
 			len(sameNameDeployments.Items), sameNameSelector, req.Operation,
 		)), nil
-	case req.Operation == admissionv1.Update:
+	case req.Operation == admissionv1beta1.Update:
 		return admission.Allowed(fmt.Sprintf(
 			"Found %d deployments for selector = %q and operation = %q",
 			len(sameNameDeployments.Items), sameNameSelector, req.Operation,

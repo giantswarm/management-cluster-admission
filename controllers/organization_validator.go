@@ -9,7 +9,7 @@ import (
 	"github.com/giantswarm/apiextensions/v3/pkg/label"
 	"github.com/giantswarm/microerror"
 	"go.uber.org/zap"
-	admissionv1 "k8s.io/api/admission/v1"
+	admissionv1beta1 "k8s.io/api/admission/v1beta1"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/labels"
 	capiv1alpha2 "sigs.k8s.io/cluster-api/api/v1alpha2"
@@ -85,7 +85,7 @@ func (v *OrganizationValidator) handle(ctx context.Context, req admission.Reques
 		}
 	}
 
-	if req.Operation == admissionv1.Delete && len(orgClusters.Items) > 0 {
+	if req.Operation == admissionv1beta1.Delete && len(orgClusters.Items) > 0 {
 		return admission.Denied(fmt.Sprintf(
 			"Found %d clusters for selector = %q and operation = %q, expected at most 0",
 			len(orgClusters.Items), orgClustersSelector, req.Operation,
