@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fetch CAPI `v1alpha2` `Cluster` resources, instead of `v1alpha3` for validating if an organization can be deleted or not.
+
 ## [0.2.1] - 2021-05-04
 
 ### Fixed
