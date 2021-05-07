@@ -69,7 +69,7 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 undeploy: NAME_SUFFIX ?= $(USER)
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
 	cd config/dev && $(KUSTOMIZE) edit set namesuffix -- -$(NAME_SUFFIX)
-	$(KUSTOMIZE) build config/dev | kubectl delete -f -
+	$(KUSTOMIZE) build config/default | kubectl delete -f -
 
 
 CONTROLLER_GEN = $(shell pwd)/bin/controller-gen

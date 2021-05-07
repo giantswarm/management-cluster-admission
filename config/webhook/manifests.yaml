@@ -1,6 +1,6 @@
 
 ---
-apiVersion: admissionregistration.k8s.io/v1beta1
+apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   creationTimestamp: null
@@ -13,7 +13,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-apps-v1beta1-deployment
+      path: /validate-apps-v1-deployment
   failurePolicy: Fail
   name: vdeployment.kb.io
   rules:
@@ -26,6 +26,7 @@ webhooks:
     - UPDATE
     resources:
     - deployments
+  sideEffects: None
 - admissionReviewVersions:
   - v1
   - v1beta1
@@ -46,3 +47,4 @@ webhooks:
     - DELETE
     resources:
     - organizations
+  sideEffects: None

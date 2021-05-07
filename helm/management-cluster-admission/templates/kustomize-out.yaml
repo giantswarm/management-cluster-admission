@@ -463,7 +463,7 @@ metadata:
 spec:
   selfSigned: {}
 ---
-apiVersion: admissionregistration.k8s.io/v1beta1
+apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
@@ -487,7 +487,7 @@ webhooks:
     service:
       name: '{{- .Release.Name | replace "." "-" | trunc 33 | trimSuffix "-" -}}-webhook-service'
       namespace: '{{ .Release.Namespace }}'
-      path: /validate-apps-v1beta1-deployment
+      path: /validate-apps-v1-deployment
   failurePolicy: Fail
   name: vdeployment.kb.io
   objectSelector:
@@ -510,6 +510,7 @@ webhooks:
     - UPDATE
     resources:
     - deployments
+  sideEffects: None
 - admissionReviewVersions:
   - v1
   - v1beta1
@@ -530,3 +531,4 @@ webhooks:
     - DELETE
     resources:
     - organizations
+  sideEffects: None
