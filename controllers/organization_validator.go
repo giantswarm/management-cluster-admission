@@ -10,8 +10,10 @@ import (
 	"github.com/giantswarm/microerror"
 	"go.uber.org/zap"
 	admissionv1 "k8s.io/api/admission/v1"
+	apimeta "k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/labels"
-	capiv1alpha3 "sigs.k8s.io/cluster-api/api/v1alpha3"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -72,12 +74,19 @@ func (v *OrganizationValidator) handle(ctx context.Context, req admission.Reques
 		}
 	}
 
-	orgClusters := capiv1alpha3.ClusterList{}
+	orgClusters := &unstructured.UnstructuredList{}
+	orgClusters.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   "cluster.x-k8s.io",
+		Version: "v1alpha2",
+		Kind:    "cluster",
+	})
 	{
-		err := v.List(ctx, &orgClusters, &client.ListOptions{
+		err := v.List(ctx, orgClusters, &client.ListOptions{
 			LabelSelector: orgClustersSelector,
 		})
-		if err != nil {
+		if apimeta.IsNoMatchError(err) {
+			// If the CRD is not in place, just ignore the error.
+		} else if err != nil {
 			return admission.Response{}, microerror.Mask(err)
 		}
 	}
