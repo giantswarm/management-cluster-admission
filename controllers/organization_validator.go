@@ -20,7 +20,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-// +kubebuilder:webhook:path=/validate-security-giantswarm-io-v1alpha1-organization,mutating=false,failurePolicy=fail,sideEffects=None,groups=security.giantswarm.io,resources=organizations,verbs=delete,versions=v1alpha1,name=organization.security.giantswarm.io,admissionReviewVersions={v1,v1beta1,v1alpha1}
+// +kubebuilder:webhook:path=/validate-security-giantswarm-io-v1alpha1-organization,mutating=false,failurePolicy=fail,groups=security.giantswarm.io,resources=organizations,verbs=delete,versions=v1alpha1,name=organization.security.giantswarm.io,admissionReviewVersions={v1,v1beta1,v1alpha1}
 
 // +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters,verbs=list;watch
 

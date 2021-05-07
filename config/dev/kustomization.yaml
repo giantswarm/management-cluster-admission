@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: management-cluster-admission-dev
 
 namePrefix: management-cluster-admission-
-nameSuffix: -USER
+nameSuffix: -axbarsan
 
 images:
 - name: controller

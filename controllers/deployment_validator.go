@@ -17,7 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-//+kubebuilder:webhook:path=/validate-apps-v1-deployment,mutating=false,failurePolicy=fail,sideEffects=None,groups=apps,resources=deployments,verbs=create;update,versions=v1,name=vdeployment.kb.io,admissionReviewVersions={v1,v1beta1}
+//+kubebuilder:webhook:path=/validate-apps-v1beta1-deployment,mutating=false,failurePolicy=fail,groups=apps,resources=deployments,verbs=create;update,versions=v1,name=vdeployment.kb.io,admissionReviewVersions={v1,v1beta1}
 
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 
@@ -124,7 +124,7 @@ func (v *DeploymentValidator) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	hookServer := mgr.GetWebhookServer()
 	// Note it has to be the same path as in kubebuilder:webhook:path
 	// marker.
-	hookServer.Register("/validate-apps-v1-deployment", &webhook.Admission{Handler: v})
+	hookServer.Register("/validate-apps-v1beta1-deployment", &webhook.Admission{Handler: v})
 	return nil
 }
 
