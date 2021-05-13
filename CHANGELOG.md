@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Allow colliding `app-operator` apps from outside `giantswarm` namespace.
+
 ## [0.3.0] - 2021-05-10
 
 ### Changed

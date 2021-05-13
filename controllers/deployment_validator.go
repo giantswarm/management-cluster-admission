@@ -61,6 +61,10 @@ func (v *DeploymentValidator) handle(ctx context.Context, req admission.Request,
 	const (
 		appNameLabel    = "app.kubernetes.io/name"
 		appVersionLabel = "app.kubernetes.io/version"
+
+		appOperatorApp = "app-operator"
+
+		giantswarmNs = "giantswarm"
 	)
 
 	if len(deployment.Labels) == 0 {
@@ -68,11 +72,17 @@ func (v *DeploymentValidator) handle(ctx context.Context, req admission.Request,
 	}
 	appName, ok := deployment.Labels[appNameLabel]
 	if !ok {
-		return admission.Allowed(fmt.Sprintf("Label %#q not found", appNameLabel)), nil
+		return admission.Allowed(fmt.Sprintf("Label %q not found", appNameLabel)), nil
 	}
 	appVersion, ok := deployment.Labels[appVersionLabel]
 	if !ok {
-		return admission.Allowed(fmt.Sprintf("Label %#q not found", appVersionLabel)), nil
+		return admission.Allowed(fmt.Sprintf("Label %q not found", appVersionLabel)), nil
+	}
+
+	// Ignore app-operator apps from outside giantswarm namespace as we are
+	// running separate instances per Workload Cluster.
+	if deployment.Labels[appNameLabel] == appOperatorApp && deployment.Namespace != giantswarmNs {
+		return admission.Allowed(fmt.Sprintf("%q app from outside %q namespace", appOperatorApp, giantswarmNs)), nil
 	}
 
 	var sameNameSelector labels.Selector
