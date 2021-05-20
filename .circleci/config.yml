@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@dev:new-gen-push-to-app-collection
+  architect: giantswarm/architect@dev:update-architect-3.6.0
 
 workflows:
   build:
