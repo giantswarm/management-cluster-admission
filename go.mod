@@ -5,15 +5,14 @@ go 1.16
 require (
 	github.com/giantswarm/apiextensions/v3 v3.26.0
 	github.com/giantswarm/microerror v0.3.0
-	github.com/go-logr/zapr v0.2.0
-	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/go-logr/zapr v0.4.0
 	github.com/spf13/pflag v1.0.5
 	go.uber.org/zap v1.17.0
-	k8s.io/api v0.20.2
-	k8s.io/apimachinery v0.20.2
-	k8s.io/client-go v0.20.2
+	k8s.io/api v0.21.2
+	k8s.io/apimachinery v0.21.2
+	k8s.io/client-go v0.21.2
 	sigs.k8s.io/cluster-api v0.3.13
-	sigs.k8s.io/controller-runtime v0.8.3
+	sigs.k8s.io/controller-runtime v0.9.2
 )
 
 replace (
