@@ -3,7 +3,7 @@ module github.com/giantswarm/management-cluster-admission
 go 1.16
 
 require (
-	github.com/giantswarm/apiextensions/v3 v3.26.0
+	github.com/giantswarm/apiextensions/v3 v3.27.3
 	github.com/giantswarm/microerror v0.3.0
 	github.com/go-logr/zapr v0.2.0
 	github.com/gogo/protobuf v1.3.2 // indirect
