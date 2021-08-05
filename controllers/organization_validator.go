@@ -10,6 +10,7 @@ import (
 	"github.com/giantswarm/microerror"
 	"go.uber.org/zap"
 	admissionv1 "k8s.io/api/admission/v1"
+	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/labels"
 	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 
@@ -77,6 +78,9 @@ func (v *OrganizationValidator) handle(ctx context.Context, req admission.Reques
 		err := v.List(ctx, &orgClusters, &client.ListOptions{
 			LabelSelector: orgClustersSelector,
 		})
+		if apimeta.IsNoMatchError(err) {
+			// If the CRD is not in place, just ignore the error.
+		}
 		if err != nil {
 			return admission.Response{}, microerror.Mask(err)
 		}
