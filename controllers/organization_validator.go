@@ -11,9 +11,8 @@ import (
 	"go.uber.org/zap"
 	admissionv1 "k8s.io/api/admission/v1"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/runtime/schema"
+	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -74,14 +73,9 @@ func (v *OrganizationValidator) handle(ctx context.Context, req admission.Reques
 		}
 	}
 
-	orgClusters := &unstructured.UnstructuredList{}
-	orgClusters.SetGroupVersionKind(schema.GroupVersionKind{
-		Group:   "cluster.x-k8s.io",
-		Version: "v1alpha2",
-		Kind:    "cluster",
-	})
+	orgClusters := capi.ClusterList{}
 	{
-		err := v.List(ctx, orgClusters, &client.ListOptions{
+		err := v.List(ctx, &orgClusters, &client.ListOptions{
 			LabelSelector: orgClustersSelector,
 		})
 		if apimeta.IsNoMatchError(err) {
