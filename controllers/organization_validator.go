@@ -80,8 +80,7 @@ func (v *OrganizationValidator) handle(ctx context.Context, req admission.Reques
 		})
 		if apimeta.IsNoMatchError(err) {
 			// If the CRD is not in place, just ignore the error.
-		}
-		if err != nil {
+		} else if err != nil {
 			return admission.Response{}, microerror.Mask(err)
 		}
 	}
