@@ -5,7 +5,7 @@ var (
 	gitSHA      = "n/a"
 	name        = "management-cluster-admission"
 	source      = "https://github.com/giantswarm/management-cluster-admission"
-	version     = "0.5.1-dev"
+	version     = "0.6.0"
 )
 
 func Description() string {
