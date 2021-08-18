@@ -8,7 +8,7 @@ require (
 	github.com/go-logr/zapr v0.2.0
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/spf13/pflag v1.0.5
-	go.uber.org/zap v1.17.0
+	go.uber.org/zap v1.19.0
 	k8s.io/api v0.20.2
 	k8s.io/apimachinery v0.20.2
 	k8s.io/client-go v0.20.2
