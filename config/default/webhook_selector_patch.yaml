@@ -18,4 +18,5 @@ webhooks:
         - key: app.kubernetes.io/name
           operator: NotIn
           values:
+            - flux-app
             - vertical-pod-autoscaler-app

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Exclude `flux-app` which consists of many deployments.
+
 ## [0.6.0] - 2021-08-11
 
 ### Changed
