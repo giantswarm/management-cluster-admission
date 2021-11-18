@@ -210,8 +210,8 @@ github.com/fvbommel/sortorder v1.0.1/go.mod h1:uk88iVf1ovNn1iLfgUVU2F9o5eO30ui72
 github.com/getsentry/raven-go v0.2.0/go.mod h1:KungGk8q33+aIAZUIVWZDr2OfAEBsO49PX4NzFV5kcQ=
 github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
-github.com/giantswarm/apiextensions/v3 v3.36.0 h1:VuZChtOsgtA0nkdDPIDkwqcXOD/QP0Ed+I07V5bkorU=
-github.com/giantswarm/apiextensions/v3 v3.36.0/go.mod h1:uV8pzwVdUlzvrC9WZGb6z0koSNSampo3nLFSDW3mukA=
+github.com/giantswarm/apiextensions/v3 v3.38.0 h1:KdELD0Pd5aSGW5dVAOD579Hj46zcBNBvtrCGBf8ceOQ=
+github.com/giantswarm/apiextensions/v3 v3.38.0/go.mod h1:JgJfW2MjWKTAXfJ77rMcmKjVl3blvGSBWy43SVrpHY0=
 github.com/giantswarm/microerror v0.3.0 h1:V/9cXlIEddNGaRYiA0vYJmgM2+sTQy+k8M7kVjOy4XM=
 github.com/giantswarm/microerror v0.3.0/go.mod h1:g8oCEMFAoEs70riRRmj9+6eiz7SqNxYl+2OfxFh1po0=
 github.com/giantswarm/to v0.3.0/go.mod h1:RTRtw+Dyk6YqoiNBOGLO981BqhibtVwogdaFIMO1y/A=
