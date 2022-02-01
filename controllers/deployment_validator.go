@@ -17,7 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-//+kubebuilder:webhook:path=/validate-apps-v1-deployment,mutating=false,failurePolicy=fail,sideEffects=None,groups=apps,resources=deployments,verbs=create;update,versions=v1,name=vdeployment.kb.io,admissionReviewVersions={v1,v1beta1}
+// +kubebuilder:webhook:path=/validate-apps-v1-deployment,mutating=false,failurePolicy=fail,sideEffects=None,groups=apps,resources=deployments,verbs=create;update,versions=v1,name=vdeployment.kb.io,admissionReviewVersions={v1,v1beta1}
 
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 
@@ -59,8 +59,9 @@ func (v *DeploymentValidator) handle(ctx context.Context, req admission.Request,
 	var err error
 
 	const (
-		appNameLabel    = "app.kubernetes.io/name"
-		appVersionLabel = "app.kubernetes.io/version"
+		appNameLabel      = "app.kubernetes.io/name"
+		appComponentLabel = "app.kubernetes.io/component"
+		appVersionLabel   = "app.kubernetes.io/version"
 
 		appOperatorApp = "app-operator"
 
@@ -88,6 +89,11 @@ func (v *DeploymentValidator) handle(ctx context.Context, req admission.Request,
 	var sameNameSelector labels.Selector
 	{
 		s := appNameLabel + "=" + appName + "," + appVersionLabel + "=" + appVersion
+		// optionally check app component label, if it is set
+		appComponent, ok := deployment.Labels[appComponentLabel]
+		if ok {
+			s += "," + appComponentLabel + "=" + appComponent
+		}
 		sameNameSelector, err = labels.Parse(s)
 		if err != nil {
 			return admission.Response{}, microerror.Mask(fmt.Errorf("failed to create selector for string = %#q with error: %s", s, err))

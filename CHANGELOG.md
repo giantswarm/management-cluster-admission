@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- In `DeploymentValidator`, when checking if the Deployment is unique, check `app.kubernetes.io/component` label if it is present.
+
 ## [0.6.2] - 2021-09-10
 
 ### Fixed
