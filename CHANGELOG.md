@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2022-02-01
+
 ### Fixed
 
 - In `DeploymentValidator`, when checking if the Deployment is unique, check `app.kubernetes.io/component` label if it is present.
@@ -81,7 +83,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[Unreleased]: https://github.com/giantswarm/management-cluster-admission/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/giantswarm/giantswarm/compare/v0.6.3...HEAD
+[0.6.3]: https://github.com/giantswarm/giantswarm/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/giantswarm/management-cluster-admission/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/giantswarm/management-cluster-admission/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/giantswarm/management-cluster-admission/compare/v0.5.0...v0.6.0
