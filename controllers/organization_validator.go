@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	securityv1alpha1 "github.com/giantswarm/apiextensions/v3/pkg/apis/security/v1alpha1"
-	"github.com/giantswarm/apiextensions/v3/pkg/label"
+	"github.com/giantswarm/k8smetadata/pkg/label"
 	"github.com/giantswarm/microerror"
+	securityv1alpha1 "github.com/giantswarm/organization-operator/api/v1alpha1"
 	"go.uber.org/zap"
 	admissionv1 "k8s.io/api/admission/v1"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
