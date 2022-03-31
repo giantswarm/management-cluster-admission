@@ -34,11 +34,11 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-	capiv1alpha3 "sigs.k8s.io/cluster-api/api/v1alpha3"
+	capi "sigs.k8s.io/cluster-api/api/v1beta1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 
-	//+kubebuilder:scaffold:imports
+	// +kubebuilder:scaffold:imports
 
 	"github.com/giantswarm/management-cluster-admission/controllers"
 	"github.com/giantswarm/management-cluster-admission/pkg/project"
@@ -50,9 +50,9 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-	utilruntime.Must(capiv1alpha3.AddToScheme(scheme))
+	utilruntime.Must(capi.AddToScheme(scheme))
 
-	//+kubebuilder:scaffold:scheme
+	// +kubebuilder:scaffold:scheme
 }
 
 var flags = struct {
@@ -82,9 +82,9 @@ func initFlags() (errors []error) {
 
 	// Validation.
 
-	//if flags.Name == "" {
+	// if flags.Name == "" {
 	//	errors = append(errors, fmt.Errorf("--%s flag must be set", flagName))
-	//}
+	// }
 
 	return
 }
@@ -183,7 +183,7 @@ func mainE(ctx context.Context) error {
 		return microerror.Mask(err)
 	}
 
-	//+kubebuilder:scaffold:builder
+	// +kubebuilder:scaffold:builder
 
 	healthProbe := &controllers.HealthProbe{
 		Client: mgr.GetClient(),
