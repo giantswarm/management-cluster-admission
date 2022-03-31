@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove `apiextensions` dependency.
+- Use `v1beta1` CAPI CRDs.
+
 ## [0.6.3] - 2022-02-01
 
 ### Fixed
