@@ -303,9 +303,9 @@ github.com/giantswarm/exporterkit v0.2.1/go.mod h1:LkZNK+2qTcbHspbizA6JBBXpQW99u
 github.com/giantswarm/exporterkit v1.0.0/go.mod h1:XO9HfOOIxcWM+9r8KKIuYHtFGdTbYIjIse2wu8UI4Ts=
 github.com/giantswarm/k8sclient/v4 v4.0.0/go.mod h1:jTwQ8q0YbJJu3ZxbjoI6hkXeuvKm15xyI/c+zwxnUH0=
 github.com/giantswarm/k8sclient/v6 v6.1.0/go.mod h1:mF0FgQHqCrAhk5EGiyN7RfgMMsz7CP3GoaFsfZ5KHps=
-github.com/giantswarm/k8smetadata v0.9.3/go.mod h1:k3DYCMdspxhk7efLkQdX1b8UZ71ijOCG3ZoIU8+5xgw=
-github.com/giantswarm/k8smetadata v0.10.1 h1:JHTgTavRtcnmzq0j8TC9EXtGG4+trCkBwuwJPAH+EWE=
 github.com/giantswarm/k8smetadata v0.10.1/go.mod h1:k3DYCMdspxhk7efLkQdX1b8UZ71ijOCG3ZoIU8+5xgw=
+github.com/giantswarm/k8smetadata v0.12.0 h1:YmCGD0jhGJ+35h0BgkEnIaOSR24Mg4I+F0jPOa1+JUY=
+github.com/giantswarm/k8smetadata v0.12.0/go.mod h1:k3DYCMdspxhk7efLkQdX1b8UZ71ijOCG3ZoIU8+5xgw=
 github.com/giantswarm/microclient v0.2.0/go.mod h1:2p+ygmU8v7MpkTCNatiGhjOmHOOqC9fdJ0rlXI4Ulfc=
 github.com/giantswarm/microendpoint v0.2.0/go.mod h1:SSkSp4Q4iSW7vwkil+/E3IXy9Q8To8vXmT5VCg24RDg=
 github.com/giantswarm/microendpoint v1.0.0/go.mod h1:2fA+TtAMjmrH3I4K6b2wGEdDwiTr0IUsAmZlL4zk1Mg=
@@ -323,8 +323,8 @@ github.com/giantswarm/micrologger v0.5.0/go.mod h1:J/jbt7A8eixqE40yq4JY8Hdbs/qeb
 github.com/giantswarm/micrologger v0.6.0/go.mod h1:/qEWo7q9w+yiD2H6E1DKbErcBQ1bAjXErVIkQYFas14=
 github.com/giantswarm/operatorkit/v2 v2.0.1/go.mod h1:xlN/LMZaQExWKwQUAI9m9xaHZCCL6WHVYGpd7Wx7LTg=
 github.com/giantswarm/operatorkit/v6 v6.1.0/go.mod h1:IR6g8cRtYdT5hyuXq3/vfX5Bp95MvUQl4+wUezjBK7w=
-github.com/giantswarm/organization-operator v1.0.0 h1:GlkBKTKC4vvJOAWY82ZnZas6WICUtV/k7+9yo3juvFc=
-github.com/giantswarm/organization-operator v1.0.0/go.mod h1:QZP3DItJp1t5gPMv3wCXc9kzA63VKodC4oMrjk1LY68=
+github.com/giantswarm/organization-operator v1.0.2 h1:NHz5kLR7PSJl7vE7A0ya/eumOZUacEtymiD8eAAzCdc=
+github.com/giantswarm/organization-operator v1.0.2/go.mod h1:MFo1LZLCmrFP8LrRdBVCE/6Khr+zEd7SvHlWC4wfKN0=
 github.com/giantswarm/to v0.3.0/go.mod h1:RTRtw+Dyk6YqoiNBOGLO981BqhibtVwogdaFIMO1y/A=
 github.com/giantswarm/to v0.4.0/go.mod h1:RTRtw+Dyk6YqoiNBOGLO981BqhibtVwogdaFIMO1y/A=
 github.com/giantswarm/versionbundle v0.2.0/go.mod h1:n7GOlSXpX9TpP3EsYhErCjskN++c7uYHEEfV81NCH7s=
