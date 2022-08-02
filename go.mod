@@ -1,6 +1,6 @@
 module github.com/giantswarm/management-cluster-admission
 
-go 1.17
+go 1.19
 
 require (
 	github.com/giantswarm/k8smetadata v0.10.1
@@ -8,7 +8,7 @@ require (
 	github.com/giantswarm/organization-operator v1.0.0
 	github.com/go-logr/zapr v0.4.0
 	github.com/spf13/pflag v1.0.5
-	go.uber.org/zap v1.20.0
+	go.uber.org/zap v1.21.0
 	k8s.io/api v0.22.2
 	k8s.io/apimachinery v0.22.2
 	k8s.io/client-go v0.22.2
