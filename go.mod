@@ -1,6 +1,6 @@
 module github.com/giantswarm/management-cluster-admission
 
-go 1.17
+go 1.19
 
 require (
 	github.com/giantswarm/k8smetadata v0.10.1
@@ -8,7 +8,7 @@ require (
 	github.com/giantswarm/organization-operator v1.0.0
 	github.com/go-logr/zapr v0.4.0
 	github.com/spf13/pflag v1.0.5
-	go.uber.org/zap v1.20.0
+	go.uber.org/zap v1.23.0
 	k8s.io/api v0.22.2
 	k8s.io/apimachinery v0.22.2
 	k8s.io/client-go v0.22.2
@@ -50,7 +50,6 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
-	github.com/stretchr/testify v1.7.2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
@@ -76,9 +75,9 @@ require (
 )
 
 replace (
-	github.com/coreos/etcd => github.com/coreos/etcd v3.3.24+incompatible
+	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
-	github.com/gorilla/websocket => github.com/gorilla/websocket v1.4.2
+	github.com/gorilla/websocket => github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/consul/api v1.10.1 => github.com/hashicorp/consul/api v1.13.0
 	github.com/hashicorp/consul/sdk v0.8.0 => github.com/hashicorp/consul/sdk v0.9.0
 	github.com/pkg/sftp v1.10.1 => github.com/pkg/sftp v1.13.5
