@@ -18,5 +18,6 @@ webhooks:
         - key: app.kubernetes.io/name
           operator: NotIn
           values:
+            - crossplane
             - flux-app
             - vertical-pod-autoscaler-app
