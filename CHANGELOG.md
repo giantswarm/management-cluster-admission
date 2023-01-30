@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.1] - 2023-01-27
 
+- Add ignores for Nancy.
+
 ## [0.8.0] - 2022-12-08
 
 ### Fixed
